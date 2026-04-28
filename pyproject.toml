@@ -1,0 +1,14 @@
+[project]
+name = "fe5211-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "altair>=6.1.0",
+    "ipykernel>=7.2.0",
+    "numpy>=2.4.4",
+    "polars>=1.40.1",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
+]
