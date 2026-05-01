@@ -18,8 +18,6 @@ dependencies = [
     "scipy>=1.17.1",
     "seaborn>=0.13.2",
     "statsmodels>=0.14.6",
-    "torch>=2.11.0",
-    "torchvinecopulib>=1.1.2",
     "vegafusion>=2.0.3",
     "vl-convert-python>=1.9.0.post1",
 ]
