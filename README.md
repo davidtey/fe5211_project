@@ -1,62 +1,69 @@
 # FE5211 Project Workflow
 
-This project builds a quarterly multi-asset return simulation, applies unsmoothing to private assets, and runs univariate distribution and volatility modeling to estimate 3-Year 95% CVaR with ARMA-GARCH & Vine Copula.
+This project builds a quarterly multi-asset return simulation pipeline. It applies unsmoothing to private assets, fits univariate distributions and volatility models, then estimates 3-year 95% CVaR using ARMA-GARCH with a Vine Copula.
 
-## Setup
+## Environment and Dependencies
 
-This project is developed on `Python 3.12.12` and uses `uv` for dependency management.
+This project uses `uv` for dependency management.
 
-1. Ensure you have `uv` installed (`pip install uv` or via your system's package manager).
-2. Sync the project dependencies:
+1. Install `uv` (`pip install uv` or via your system package manager).
+2. Sync dependencies:
    ```bash
    uv sync
    ```
-3. Activate the virtual environment provided by `uv`:
+3. Activate the virtual environment:
    ```bash
    source .venv/bin/activate
    ```
 
 ## Folder Structure
 
-- `pyproject.toml`: The configuration file containing project metadata and dependency requirements.
-- `code/`: Analysis notebooks (data pipeline, modeling, and riskfolio exploration) and helper scripts.
-- `data/`: Intermediate and final CSV files, as well as initial data notebooks.
+- `pyproject.toml`: Project configuration and dependencies.
+- `code/`: Main analysis and modeling notebooks, plus visualization helpers.
+- `data/`: Raw/intermediate/result data and data exploration notebooks.
 
-## Main Analysis File ⭐️
+## Main Analysis Entry Point
 
-**`code/rvine_cvar_pipeline.ipynb`** is the file containing the **main modeling, analysis, and results visualization**. 
-It executes the primary pipeline which includes:
-- Fitting ARMA(1,1)-GARCH(1,1) marginals to the quarterly returns.
-- Fitting a vine copula to the PIT residuals.
-- Simulating 3-year quarterly paths and estimating 95% CVaR.
-- Visualizing results and risk contributions.
+**`code/rvine_cvar_pipeline.ipynb`** is the primary pipeline notebook, including:
 
-## Recommended Run Order & Other Files
+- ARMA(1,1)-GARCH(1,1) marginal fits for quarterly returns.
+- R-vine copula fit on PIT residuals.
+- 3-year quarterly path simulation and 95% CVaR estimation.
+- Risk contribution and key visualization outputs.
 
-1. **Private asset data exploration**
-   Notebook: `data/Private_Asset_Returns.ipynb`
-   Purpose: Raw NCREIF and PE data records and basic explorations.
+## Recommended Run Order
 
-2. **Get public market quarterly returns**  
-   Notebook: `code/get_data_yfinance.ipynb`  
-   Purpose: Download market data (SPY, AGG) from Yahoo Finance, combine with PE and NPI data, and export quarterly return CSV (`data/quarterly_return_SPY_AGG.csv` and `data/quarterly_returns.csv`).
+1. **Fetch public market data**
+   - Notebook: `code/get_data_yfinance.ipynb`
+   - Goal: Download SPY/AGG from Yahoo Finance, merge with PE/NPI, and export quarterly returns.
+   - Outputs: `data/quarterly_returns.csv`
 
-3. **Build and preprocess combined return dataset**  
-   Notebook: `code/data_preprocess.ipynb`  
-   Input: Quarterly return data including SPY, AGG, PE, NPI.
-   Output: `data/processed_returns.csv`  
-   Key logic:
-   - Apply unsmoothing (FGW-style) to **PE** and **NPI**.
-   - Keep **SPY** and **AGG** as raw observed returns (no unsmoothing).
+2. **Build and preprocess combined dataset**
+   - Notebook: `code/data_preprocess.ipynb`
+   - Input: `data/quarterly_returns.csv`
+   - Output: `data/processed_returns.csv`
+   - Key logic:
+     - Apply FGW-style unsmoothing to PE and NPI.
+     - Keep SPY and AGG as observed returns (no unsmoothing).
 
-4. **Univariate modeling + GARCH per asset**  
-   Notebook: `code/univariate_distribution.ipynb`  
-   Input: `data/processed_returns.csv`  
-   Purpose:
-   - Fit candidate univariate distributions asset-by-asset.
-   - Compare models with AIC/BIC.
-   - Run GARCH modeling per asset and inspect diagnostics.
+3. **Univariate distribution and GARCH modeling**
+   - Notebook: `code/univariate_distribution.ipynb`
+   - Input: `data/processed_returns.csv`
+   - Goal: Compare distributions via AIC/BIC and fit GARCH per asset with diagnostics.
 
-### Helper Scripts
+4. **Main pipeline and risk evaluation**
+   - Notebook: `code/rvine_cvar_pipeline.ipynb`
+   - Goal: Copula fitting, path simulation, and 3-year 95% CVaR estimation.
 
-- **`code/visualizations.py`**: A Python module containing plotting and visualization functions (using Altair, Matplotlib) utilized by the main pipeline.
+## Visualization and Helper Scripts
+
+- `code/visualizations.py`: Plotting helpers (Altair/Matplotlib) for GARCH bands, copula structure, simulated paths, and risk distributions.
+
+## Outputs
+
+- All final outputs (charts and risk metrics, including 12Q VaR/CVaR, copula dependence, and simulation fan charts) are produced in `code/rvine_cvar_pipeline.ipynb`.
+
+## Notes
+
+- The project uses quarterly frequency with a 12-quarter (3-year) risk window.
+- For reproducibility, run notebooks in the recommended order with dependencies synced.
