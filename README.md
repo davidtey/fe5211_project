@@ -4,7 +4,7 @@ This project builds a quarterly multi-asset return simulation, applies unsmoothi
 
 ## Setup
 
-This project uses `uv` for dependency management.
+This project is developed on `Python 3.12.12` and uses `uv` for dependency management.
 
 1. Ensure you have `uv` installed (`pip install uv` or via your system's package manager).
 2. Sync the project dependencies:
