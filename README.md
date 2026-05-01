@@ -1,27 +1,55 @@
-# FE5211 Project Workflow by now
+# FE5211 Project Workflow
 
-This project builds a quarterly multi-asset return dataset, applies unsmoothing to private assets, and runs univariate distribution and volatility modeling.
+This project builds a quarterly multi-asset return simulation, applies unsmoothing to private assets, and runs univariate distribution and volatility modeling to estimate 3-Year 95% CVaR with ARMA-GARCH & Vine Copula.
+
+## Setup
+
+This project uses `uv` for dependency management.
+
+1. Ensure you have `uv` installed (`pip install uv` or via your system's package manager).
+2. Sync the project dependencies:
+   ```bash
+   uv sync
+   ```
+3. Activate the virtual environment provided by `uv`:
+   ```bash
+   source .venv/bin/activate
+   ```
 
 ## Folder Structure
 
-- `code/`: analysis notebooks (data pipeline, modeling, and riskfolio exploration)
-- `data/`: intermediate and final CSV files
+- `pyproject.toml`: The configuration file containing project metadata and dependency requirements.
+- `code/`: Analysis notebooks (data pipeline, modeling, and riskfolio exploration) and helper scripts.
+- `data/`: Intermediate and final CSV files, as well as initial data notebooks.
 
-## Recommended Run Order
+## Main Analysis File ⭐️
 
-1. **Get public market quarterly returns**  
+**`code/rvine_cvar_pipeline.ipynb`** is the file containing the **main modeling, analysis, and results visualization**. 
+It executes the primary pipeline which includes:
+- Fitting ARMA(1,1)-GARCH(1,1) marginals to the quarterly returns.
+- Fitting a vine copula to the PIT residuals.
+- Simulating 3-year quarterly paths and estimating 95% CVaR.
+- Visualizing results and risk contributions.
+
+## Recommended Run Order & Other Files
+
+1. **Private asset data exploration**
+   Notebook: `data/Private_Asset_Returns.ipynb`
+   Purpose: Raw NCREIF and PE data records and basic explorations.
+
+2. **Get public market quarterly returns**  
    Notebook: `code/get_data_yfinance.ipynb`  
-   Purpose: download market data (SPY, AGG) from Yahoo Finance, combine with PE and NPI data and export quarterly return CSV.
+   Purpose: Download market data (SPY, AGG) from Yahoo Finance, combine with PE and NPI data, and export quarterly return CSV (`data/quarterly_return_SPY_AGG.csv` and `data/quarterly_returns.csv`).
 
-2. **Build and preprocess combined return dataset**  
+3. **Build and preprocess combined return dataset**  
    Notebook: `code/data_preprocess.ipynb`  
-   Input: quarterly return data including SPY, AGG, PE, NPI  
+   Input: Quarterly return data including SPY, AGG, PE, NPI.
    Output: `data/processed_returns.csv`  
    Key logic:
    - Apply unsmoothing (FGW-style) to **PE** and **NPI**.
    - Keep **SPY** and **AGG** as raw observed returns (no unsmoothing).
 
-3. **Univariate modeling + GARCH per asset**  
+4. **Univariate modeling + GARCH per asset**  
    Notebook: `code/univariate_distribution.ipynb`  
    Input: `data/processed_returns.csv`  
    Purpose:
@@ -29,15 +57,10 @@ This project builds a quarterly multi-asset return dataset, applies unsmoothing 
    - Compare models with AIC/BIC.
    - Run GARCH modeling per asset and inspect diagnostics.
 
-4. **Riskfolio CVaR exploration**  
+5. **Riskfolio CVaR exploration**  
    Notebook: `code/riskfolio_CVar.ipynb`  
-   Purpose: exploratory use of `riskfolio-lib` for CVaR-related functions (e.g., CVaR, risk contribution, risk margin).
+   Purpose: Exploratory use of `riskfolio-lib` for CVaR-related functions (e.g., CVaR, risk contribution, risk margin).
 
-## Riskfolio References
+### Helper Scripts
 
-You can further explore the Riskfolio library for additional portfolio/risk analytics:
-
-- Installation / docs: https://riskfolio-lib.readthedocs.io/en/latest/install.html
-- Risk functions: https://riskfolio-lib.readthedocs.io/en/latest/risk.html
-- Plot functions: https://riskfolio-lib.readthedocs.io/en/latest/plot.html
-
+- **`code/visualizations.py`**: A Python module containing plotting and visualization functions (using Altair, Matplotlib) utilized by the main pipeline.

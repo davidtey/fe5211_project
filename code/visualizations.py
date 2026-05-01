@@ -229,11 +229,6 @@ def plot_single_path_return_volatility_overlay(
         .mark_area(opacity=0.2, color=color)
         .encode(x=alt.X("label:O", sort=quarter_labels, title="Time"), y="lower:Q", y2="upper:Q")
     )
-    mean_line = (
-        alt.Chart(frame)
-        .mark_line(color=color, strokeWidth=2.2)
-        .encode(x=alt.X("label:O", sort=quarter_labels, title="Time"), y=alt.Y("mean:Q", title="Simulated Cumulative Value"))
-    )
     path_line = (
         alt.Chart(frame)
         .mark_line(color="#111111", strokeWidth=1.6)
@@ -241,7 +236,7 @@ def plot_single_path_return_volatility_overlay(
     )
     points = alt.Chart(frame).mark_point(color="#111111", size=50).encode(x="label:O", y="path:Q", tooltip=["label", alt.Tooltip("path:Q", format=".4f")])
 
-    chart = (band + mean_line + path_line + points).properties(title=title, width=820, height=320)
+    chart = (band + path_line + points).properties(title=title, width=820, height=320)
     return chart
 
 
