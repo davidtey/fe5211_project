@@ -57,10 +57,6 @@ It executes the primary pipeline which includes:
    - Compare models with AIC/BIC.
    - Run GARCH modeling per asset and inspect diagnostics.
 
-5. **Riskfolio CVaR exploration**  
-   Notebook: `code/riskfolio_CVar.ipynb`  
-   Purpose: Exploratory use of `riskfolio-lib` for CVaR-related functions (e.g., CVaR, risk contribution, risk margin).
-
 ### Helper Scripts
 
 - **`code/visualizations.py`**: A Python module containing plotting and visualization functions (using Altair, Matplotlib) utilized by the main pipeline.
